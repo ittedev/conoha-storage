@@ -110,7 +110,7 @@ conoha-storage cat container/log.txt
 
 MySQLのバックアップを行う例を記します。
 
-バックアップ用のコンテナを準備しておきます。
+予めバックアップ用のコンテナを準備しておきます。
 
 ```bash
 conoha-storage mkdir backup --archive=backup_archive
@@ -119,7 +119,9 @@ conoha-storage mkdir backup --archive=backup_archive
 `mysqldump`の出力をファイルに保存せずに直接ストレージに保存します。
 ここでは`--delete-after`オプションで30日後に自動的に削除されるようにしています。
 
+```
 mysqldump -x -A | conoha-storage backup/backup.sql --delete-after=2592000
+```
 
 ## 今後の開発予定
 

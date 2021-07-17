@@ -50,7 +50,6 @@ program
   .option('-s, --silent', 'コンソールに結果を出力しません。')
   .option('--delete-after <secound>', 'オブジェクト追加の際に何秒後に削除するか追加します。')
 
-  // mysqldump -x -B test_db | ts-node ./src/cli.ts test_dir/mydump --delete-after=60
 program
   .argument('<remote_object>', 'サブコマンドを指定しない場合は標準入力をオブジェクトに追加します。\n（Windowsはサポートされません）')
   .action(async (remoteObject: string) => {
@@ -141,7 +140,7 @@ program
     const options = program.opts();
     const storage = await createStorate(config, options)
     await storage.get(remote_source, local_file, progress => {
-      if (!options.silent) {
+      if (local_file !== '-' && !options.silent) {
         process.stdout.write(`\r${remote_source}  ${pad((Math.round(progress.percent * 1000) / 10).toFixed(1), 5)}%`)
       }
     }, error => {
@@ -149,6 +148,9 @@ program
         process.stdout.write(`\r${error.message}`)
       }
     })
+    if (local_file !== '-' && !options.silent) {
+      console.log('')
+    }
   })
 
 program

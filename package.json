@@ -1,11 +1,18 @@
 {
   "name": "conoha-storage",
-  "version": "0.0.1",
-  "description": "ConoHaオブジェクトストレージのためのクライアントとコマンド",
+  "version": "0.1.0",
+  "license": "MIT",
   "main": "dist/index.js",
   "bin": {
     "conoha-storage": "dist/cli.js"
   },
+  "description": "ConoHaオブジェクトストレージのためのクライアントとコマンド",
+  "keywords": [
+    "conoha",
+    "object-storage",
+    "command",
+    "client"
+  ],
   "files": [
     "dist",
     "LICENSE"
@@ -14,7 +21,6 @@
     "build": "tsc"
   },
   "author": "Nakamura",
-  "license": "MIT",
   "devDependencies": {
     "typescript": "^4.1.2"
   },

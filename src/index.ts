@@ -57,8 +57,18 @@ export class ConohaStorage {
     return await this.client.get(container).json()
   }
 
-  async mkdir(container: string) {
-    return await this.client.put(container).json()
+  async mkdir(container: string, options: any) {
+    if (options.archive) {
+      await this.client.put(options.archive)
+      await this.client.put(container, {
+        headers: {
+          'X-Versions-Location': options.archive,
+          'X-Auth-Token': this.token.id
+        }
+      })
+    } else {
+      await this.client.put(container)
+    }
   }
 
   async rmdir(container: string) {
@@ -70,7 +80,6 @@ export class ConohaStorage {
   }
 
   async put(localFile: string, remoteObject: string, options: any = {}, loading?: (progress: Progress) => void, error?: (error: Error) => void) {
-    // const pass = new PassThrough()
 
     // エラーが発生した後もuploadProgressイベントが発生するのを防ぐ
     const loadingCallback = (progress: Progress) => loading(progress)
@@ -99,13 +108,15 @@ export class ConohaStorage {
     }
   }
 
-  get(source: string, target: string, loading?: (progress: Progress) => void, error?: (error: Error) => void) {
+  async get(source: string, localFile: string, loading?: (progress: Progress) => void, error?: (error: Error) => void) {
     const stream = this.client.stream(source)
     if (loading) stream.on('downloadProgress', loading)
     if (error) stream.on('error', error)
-    stream.on('close', () => console.log('close'))
 
-    stream
-      .pipe(fs.createWriteStream(target).on('error', error))
+    const target = localFile === '-' ? process.stdout : fs.createWriteStream(localFile)
+    await pipeline(
+      stream,
+      target
+    )
   }
 }

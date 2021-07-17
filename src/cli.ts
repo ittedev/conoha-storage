@@ -28,18 +28,41 @@ const pad = (value: string, width: number, isLeft: boolean = false): string =>
     (' '.repeat(width) + value).slice(-width)
 
 program
-  .version(`Version ${packageDefs.version}`, '-v, -V, --version', 'conoha-storageのバージョンを表示します。')
+  .name('conoha-storage')
+  .usage('[options] [sub command] [args...]')
+  .version(`conoha-storage ── Version ${packageDefs.version} ──`, '-v, -V, --version', 'バージョンを表示します。')
   .helpOption('', 'conoha-storageの使い方を表示します。')
-  // .option('-t, --timestamp', 'オブジェクト追加の際にタイムスタンプを付与します。')
+  .addHelpText('before', `conoha-storage ── Version ${packageDefs.version} ──
+
+  ConoHaオブジェクトストレージのための管理コマンドです。
+  使用する前に.envファイルにCONOHA_ENDPOINT, CONOHA_TENANTID, CONOHA_USERNAME, CONOHA_PASSWORDを設定してください。
+  設定情報が不明な場合や、認証が上手く行かない場合は下記のURLからConoHaにログインして設定情報を確認してください。
+  https://manage.conoha.jp/API/
+
+  詳しい使い方は下記URLを参照してください。
+  https://github.com/ittedev/conoha-storage
+  `)
+
+program
+  .option('--archive <container>', 'コンテナ追加の際にアーカイブ用のコンテナを指定します。')
   .option('--no-auth', '認証なしにストレージにアクセスします。')
   .option('-s, --silent', 'コンソールに結果を出力しません。')
   .option('--delete-after <secound>', 'オブジェクト追加の際に何秒後に削除するか追加します。')
+
+  // mysqldump -x -B test_db | ts-node ./src/cli.ts test_dir/mydump --delete-after=60
+program
+  .argument('<remote_object>', 'サブコマンドを指定しない場合は標準入力をオブジェクトに追加します。\n（Windowsはサポートされません）')
+  .action(async (remoteObject: string) => {
+    const options = program.opts()
+    const storage = await createStorate(config, options)
+    await storage.put('-', remoteObject, options)
+  })
 
 program
   .command('list')
   .alias('ls')
   .argument('[container]')
-  .description('コンテナ/ファイルの一覧を表示します。')
+  .description('コンテナ/オブジェクトの一覧を表示します。')
   .action(async (container: string = '') => {
     try {
       const options = program.opts();
@@ -53,9 +76,7 @@ program
       for (const header of headers) {
         widths.push(Math.max(header.length + 2, Math.min(30, data.reduce((num, item) => Math.max(num, item[header].toString().length), 0))))
       }
-      if (container !== '') {
-        console.log(`\n container: ${container}\n`)
-      }
+      console.log()
       console.log(headers.map((header, index) => ` ${pad(header, widths[index], index === 0)} `).join('   '))
       console.log(headers.map((header, index) => '─'.repeat(widths[index]+2)).join('───'))
       for (const item of data) {
@@ -74,7 +95,7 @@ program
   .action(async (container: string) => {
     const options = program.opts();
     const storage = await createStorate(config, options)
-    await storage.mkdir(container)
+    await storage.mkdir(container, options)
   })
 
 program
@@ -97,7 +118,7 @@ program
     const size = localFile === '-' ? 0 : fs.statSync(localFile).size
     await storage.put(localFile, remoteObject, options,
     progress => {
-      if (size === 0 || !options.silent) {
+      if (size !== 0 && !options.silent) {
         process.stdout.write(`\r${localFile} ${pad((Math.round(progress.transferred * 1000 / size) / 10).toFixed(), 5)}%`)
       }
     },
@@ -106,6 +127,9 @@ program
         process.stdout.write(`\r${error.message}`)
       }
     })
+    if (size !== 0 && !options.silent) {
+      console.log()
+    }
   })
 
 program
@@ -115,7 +139,7 @@ program
   .action(async ( remote_source: string, local_file: string ) => {
     const options = program.opts();
     const storage = await createStorate(config, options)
-    storage.get(remote_source, local_file, progress => {
+    await storage.get(remote_source, local_file, progress => {
       if (!options.silent) {
         process.stdout.write(`\r${remote_source}  ${pad((Math.round(progress.percent * 1000) / 10).toFixed(1), 5)}%`)
       }
@@ -124,6 +148,16 @@ program
         process.stdout.write(`\r${error.message}`)
       }
     })
+  })
+
+program
+  .command('cat')
+  .argument('<remote_object>')
+  .description('オブジェクトを標準出力に表示します。\n（Windowsはサポートされません）')
+  .action(async ( remoteObject: string ) => {
+    const options = program.opts();
+    const storage = await createStorate(config, options)
+    await storage.get(remoteObject, '-')
   })
 
 program

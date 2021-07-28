@@ -21,6 +21,10 @@
     "build": "tsc"
   },
   "author": "Nakamura",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ittedev/conoha-storage.git"
+  },
   "devDependencies": {
     "typescript": "^4.1.2"
   },

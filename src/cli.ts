@@ -50,10 +50,10 @@ program
   .option('--no-auth', '認証なしにストレージにアクセスします。')
   .option('-s, --silent', 'コンソールに結果を出力しません。')
   .option('--delete-after <secound>', 'オブジェクト追加の際に何秒後に削除するか追加します。')
-  .option('-p, --port <port>', 'サーバーのポート番号を指定します（デフォルト：3333）。', '3333')
+  .option('-p, --port <port>', 'サーバーのポート番号を指定します。', '3333')
 
 program
-  .argument('<remote_object>', 'サブコマンドを指定しない場合は標準入力をオブジェクトに追加します。\n（Windowsはサポートされません）')
+  .argument('<remote_object>', 'サブコマンドを指定しない場合は標準入力から受取ったデータをオブジェクトに追加します。\n（Windowsはサポートされません）')
   .action(async (remoteObject: string) => {
     const options = program.opts()
     const storage = await createStorate(config, options)
@@ -167,7 +167,7 @@ program
 program
   .command('cat')
   .argument('<remote_object>')
-  .description('オブジェクトを標準出力に表示します。\n（Windowsはサポートされません）')
+  .description('オブジェクトを標準出力に出力します。\n（Windowsはサポートされません）')
   .action(async ( remoteObject: string ) => {
     const options = program.opts();
     const storage = await createStorate(config, options)

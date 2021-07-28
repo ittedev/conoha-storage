@@ -61,6 +61,15 @@ program
   })
 
 program
+  .command('auth')
+  .description('トークンを取得します。')
+  .action(async (container: string = '') => {
+    const options = program.opts();
+    const storage = await createStorate(config, options)
+    console.log(`token  : ${storage.token.id}\nexpires: ${storage.token.expires}`)
+  })
+
+program
   .command('list')
   .alias('ls')
   .argument('[container]')

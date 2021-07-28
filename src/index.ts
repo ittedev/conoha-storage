@@ -21,7 +21,7 @@ export interface ConohaToken {
 export class ConohaStorage {
   private client: Got
   private config: ConohaStorageConfig
-  private token: ConohaToken
+  public token: ConohaToken
 
   constructor (config: ConohaStorageConfig) {
     this.config = config

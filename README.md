@@ -22,24 +22,30 @@ CONOHA_USERNAME=gncu5...
 CONOHA_PASSWORD=T3Zfo...
 ```
 
-`list`コマンドを実行してこのように出力されれば認証成功です。
+`auth`コマンドを実行して次のように出力されれば認証成功です。
 
 ```bash
-$ conoha-storage list
-
- name            count        bytes 
-────────────────────────────────────
-
+$ conoha-storage auth
+token  : 9b07a...
+expires: 2021-...
 ```
 
 ## 使い方
+
+### `auth`コマンド
+
+認証を行い、トークンを発行します。
+
+```bash
+conoha-storage auth
+```
 
 ### `list`コマンド
 
 コンテナの一覧を取得します。
 
 ```bash
-conoha-storage list 
+conoha-storage list
 ```
 
 コンテナを指定することでそのコンテナ内のオブジェクト一覧を取得します。
@@ -133,5 +139,6 @@ mysqldump -x -A | conoha-storage backup/backup.sql --delete-after=2592000
 
 ## 今後の開発予定
 
+- CSV出力
 - `list`コマンドに検索条件やページングを追加
 - オブジェクトの公開情報を制御

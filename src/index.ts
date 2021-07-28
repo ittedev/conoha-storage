@@ -108,15 +108,19 @@ export class ConohaStorage {
     }
   }
 
-  async get(source: string, localFile: string, loading?: (progress: Progress) => void, error?: (error: Error) => void) {
-    const stream = this.client.stream(source)
-    if (loading) stream.on('downloadProgress', loading)
-    if (error) stream.on('error', error)
+  async get(source: string, localFile?: string, loading?: (progress: Progress) => void, error?: (error: Error) => void) {
+    if (localFile) {
+      const stream = this.client.stream(source)
+      if (loading) stream.on('downloadProgress', loading)
+      if (error) stream.on('error', error)
 
-    const target = localFile === '-' ? process.stdout : fs.createWriteStream(localFile)
-    await pipeline(
-      stream,
-      target
-    )
+      const target = localFile === '-' ? process.stdout : fs.createWriteStream(localFile)
+      await pipeline(
+        stream,
+        target
+      )
+    } else {
+      return this.client.get(source)
+    }
   }
 }

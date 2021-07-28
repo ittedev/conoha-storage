@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import fs from 'fs'
 import { Command } from 'commander';
 import { ConohaStorage, ConohaStorageConfig } from './'
+import { ConohaStorageServer } from './gui'
 
 dotenv.config()
 const program = new Command()
@@ -49,6 +50,7 @@ program
   .option('--no-auth', '認証なしにストレージにアクセスします。')
   .option('-s, --silent', 'コンソールに結果を出力しません。')
   .option('--delete-after <secound>', 'オブジェクト追加の際に何秒後に削除するか追加します。')
+  .option('-p, --port <port>', 'サーバーのポート番号を指定します（デフォルト：3333）。', '3333')
 
 program
   .argument('<remote_object>', 'サブコマンドを指定しない場合は標準入力をオブジェクトに追加します。\n（Windowsはサポートされません）')
@@ -171,6 +173,17 @@ program
     const options = program.opts();
     const storage = await createStorate(config, options)
     await storage.delete(remote_object)
+  })
+
+program
+  .command('studio')
+  .description('GUIサーバーを立ち上げます。')
+  .action(async ( remoteObject: string ) => {
+    const options = program.opts();
+    const storage = await createStorate(config, options)
+    const server = new ConohaStorageServer(storage)
+    server.listen(options.port)
+    console.log(`\nConoha Storage studio: http://localhost:${options.port}\n`)
   })
 
 program

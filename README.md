@@ -10,7 +10,7 @@ npm install -g conoha-storage
 
 node.jsはv15.0.0以上に対応しています。
 
-## 初期設定
+## セットアップ
 
 ConoHaオブジェクトストレージの情報を.envファイルに記載します。
 [ConoHa API情報](https://manage.conoha.jp/API/)にログインして以下の例のように設定情報を記載します。
@@ -102,6 +102,14 @@ conoha-storage get container/log.txt -
 conoha-storage cat container/log.txt
 ```
 
+### `studio`コマンド
+
+管理用GUIサーバーを立ち上げます。
+
+```bash
+conoha-storage studio
+```
+
 ### その他
 
 その他の使い方は`conoha-storage --help`で確認できます。
@@ -127,4 +135,3 @@ mysqldump -x -A | conoha-storage backup/backup.sql --delete-after=2592000
 
 - `list`コマンドに検索条件やページングを追加
 - オブジェクトの公開情報を制御
-- 管理用サーバーの構築

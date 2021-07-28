@@ -26,7 +26,9 @@
   },
   "dependencies": {
     "commander": "^8.0.0",
+    "dayjs": "^1.10.6",
     "dotenv": "^10.0.0",
-    "got": "^11.8.2"
+    "got": "^11.8.2",
+    "towait": "^0.0.3"
   }
 }

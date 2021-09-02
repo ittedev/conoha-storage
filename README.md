@@ -141,4 +141,3 @@ mysqldump -x -A | conoha-storage backup/backup.sql --delete-after=2592000
 
 - CSV出力
 - `list`コマンドに検索条件やページングを追加
-- オブジェクトの公開情報を制御

@@ -110,6 +110,16 @@ program
   })
 
 program
+  .command('publish')
+  .argument('<container>')
+  .description('コンテナを公開します。')
+  .action(async (container: string) => {
+    const options = program.opts();
+    const storage = await createStorate(config, options)
+    await storage.publish(container)
+  })
+
+program
   .command('rmdir')
   .argument('<container>')
   .description('コンテナを削除します。')

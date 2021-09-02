@@ -70,6 +70,15 @@ export class ConohaStorage {
       await this.client.put(container)
     }
   }
+  
+  async publish(container: string) {
+    await this.client.put(container, {
+      headers: {
+        'X-Container-Read': '.r:*',
+        'X-Auth-Token': this.token.id
+      }
+    })
+  }
 
   async rmdir(container: string) {
     return await this.client.delete(container)
